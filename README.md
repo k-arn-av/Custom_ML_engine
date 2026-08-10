@@ -6,7 +6,7 @@ A lightweight machine learning engine built from scratch to demonstrate custom n
 
 ## Overview
 
-I am building this project to gain a deep, foundational understanding of core deep learning primitives, automatic differentiation, and low-level matrix operations—implementing a complete Multi-Layer Perceptron (MLP) architecture from scratch without third-party ML dependencies.
+I am building this project to gain a deep, foundational understanding of core deep learning primitives, automatic differentiation, and low-level matrix operations, implementing a complete Multi-Layer Perceptron (MLP) architecture from scratch without third-party ML dependencies.
 
 ---
 
