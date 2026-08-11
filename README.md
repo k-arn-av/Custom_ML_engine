@@ -20,6 +20,7 @@ Moving next to the Loss Function—that calculates the initial error gradients r
 
 Finally, tying it all together with the Network Layer—that manages the layers and runs the full pipeline.
 
+--- 
 
 ## Highlights
 
