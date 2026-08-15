@@ -1,14 +1,39 @@
+#pragma once
 #include <vector>
 #include <stdexcept>
+#include <random>
 
 class Matrix{
+
     private:
         size_t total_rows;
         size_t total_columns;
         std::vector<double>elements;//contiguous array for efficient processing; promotes DoD
 
     public:
-        Matrix(size_t R, size_t C, double initial_val=0.0): total_rows(R), total_columns(C), elements(R*C,initial_val){}
+        //constructors: 
+        //one that takes size and initial value only to make a matrix instantly, used for linear calculations
+        //second that fills in the input matrix data for later use when feedforward, uses initializer list to bypass vector initialization repitition
+        //third that creates a matrix with random numbers from the given range min and max using Mersenne Twister engine
+        Matrix(size_t r, size_t c, double initial_val=0.0): total_rows(r), total_columns(c), elements(r*c,initial_val){}
+
+        Matrix(size_t r, size_t c, std::initializer_list<double> user_data) : total_rows(r), total_columns(c), elements(user_data){
+            if (elements.size() != r * c){
+                throw std::invalid_argument("Error: Initialization list size does not match matrix dimensions.");
+            }
+        }
+
+        Matrix(size_t r, size_t c, double minimum, double maximum):total_rows(r), total_columns(c), elements(r*c){
+            //static locks the local object creation (engine) in the memory, so whenever the function is called, the object remains the same, just its range is changed
+            static thread_local std::mt19937 engine(std::random_device{}());// static in a local function preserves the variable and locks the initialization. can only be destroyed when the thread processing it ends (main()), 
+                                                                            // thread local ensures the engine runs for each call separately (locally), preventing thread mixups while multithreading (processing multiple batches at once)
+            std::uniform_real_distribution<double> distribute(minimum, maximum);// distributes double numbers from the given range for each object construction
+
+            for (size_t i=0; i<elements.size(); ++i){
+                elements[i]=distribute(engine);
+            }
+            
+        }
 
         //elements and index access for row/col and index; essential for array element storage
 
@@ -46,44 +71,24 @@ class Matrix{
             return elements.size();
         }
 
-        Matrix transposed() const{};
+        //Matrix operations
 
-        static Matrix hadamard(const Matrix& first_matrix, const Matrix& second_matrix){};
+         //randomizes the elements using random library for weight matrix. eg, Matrix W(r,c,0.0); W.randomize() 
 
-        // static class multiplication that takes two matrices
-        static Matrix multiply(const Matrix& first_matrix, const Matrix& second_matrix){
-            if(first_matrix.total_columns != second_matrix.total_rows)
-                throw std::invalid_argument("Matrix multiply: inner dimensions must match");
-            Matrix out(first_matrix.total_rows, second_matrix.total_columns);
-            for(size_t r=0;r<out.total_rows;++r){
-                for(size_t c=0;c<out.total_columns;++c){
-                    double sum = 0.0;
-                    for(size_t k=0;k<first_matrix.total_columns;++k)
-                        sum += first_matrix(r,k) * second_matrix(k,c);
-                    out(r,c) = sum;
-                }
-            }
-            return out;
-        }
+        Matrix transposed() const{}; //transposes the this matrix
 
-        Matrix scalar_multiplication(double n)const {};
+        static Matrix hadamard(const Matrix& first_matrix, const Matrix& second_matrix){};// symmetrical design; Matrix::Hadamard(A,B)
 
+        Matrix& hadamard_inplace(const Matrix& other){}; //changes this matrix in place
 
+        Matrix operator *(const Matrix& other) {}; // Matrix Multiplication
 
+        Matrix operator *(double num)const {}; // Scalar Multiplication
 
+        Matrix& operator *=(double num) {}; // Scalar Multiplication in place
 
+        Matrix operator +(const Matrix& other) {}; // Matrix Addition
 
-        
-
-
-
-
-
-
+        Matrix operator -(const Matrix& other) {}; // Matrix difference
 
 };
-
-// non-member operator* for readability; forwards to the class static `multiply`
-inline Matrix operator*(const Matrix& a, const Matrix& b){
-    return Matrix::multiply(a,b);
-}
