@@ -12,7 +12,11 @@ I am building this project to gain a deep, foundational understanding of core de
 
 ## Current Status: Active Development
 
-Currently working on the Layers Module- that takes the input matrix, and will have the polymorphic functions feed forward() and feed backward(), then will move to the Dense Layer—that takes the input matrix (X), weight matrix (W), bias (B), weight and bias gradients (dW, dB), and does the feed forward calculations (Z = W·X + B).
+Currently Working on **Activation Layer module**; finished Matrix, Layer and Dense Layer Modules. 
+
+The project started with Matrix Module, that covers every operations necessary for Linear Calculations. It uses a std::vector container to store the 2D matrix into a flat 1D array, to boost CPU cache locality. I have ensured that all operations are math friendly using operator function, like Mat(r,c) to get the data on that row and column or A*B for matrix multiplication. This module changed from using nested vectors to a 1D vector, adding more needed operations like sum_columns(), allowed for weight matrix random creation using mt19937 engine and calculated weight range using Xavier's Uniform Initialization.
+
+Moving on the next module, Layers Module- that takes the input matrix, and will have the polymorphic functions feed forward() and feed backward(), then will move to the Dense Layer—that takes the input matrix (X), weight matrix (W), bias (B), weight and bias gradients (dW, dB), and does the feed forward calculations (Z = W·X + B).
 
 This is followed by the Activation Layer—that makes the output matrix non-linear by using the Rectified Linear Unit (ReLU) activation function (max(0, Output)), preventing output simplification and mathematical collapse.
 
