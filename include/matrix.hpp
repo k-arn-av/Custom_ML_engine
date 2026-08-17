@@ -15,15 +15,16 @@ class Matrix{
         //one that takes size and initial value only to make a matrix instantly, used for linear calculations
         //second that fills in the input matrix data for later use when feedforward, uses initializer list to bypass vector initialization repitition
         //third that creates a matrix with random numbers from the given range min and max using Mersenne Twister engine
+        //fourth that creates an empty matrix for initialization without value declaration
         Matrix(size_t r, size_t c, double initial_val=0.0): total_rows(r), total_columns(c), elements(r*c,initial_val){}
 
-        Matrix(size_t r, size_t c, std::initializer_list<double> user_data) : total_rows(r), total_columns(c), elements(user_data){
+        Matrix(size_t r, size_t c, std::initializer_list<double> user_data): total_rows(r), total_columns(c), elements(user_data){
             if (elements.size() != r * c){
                 throw std::invalid_argument("Error: Initialization list size does not match matrix dimensions.");
             }
         }
 
-        Matrix(size_t r, size_t c, double minimum, double maximum):total_rows(r), total_columns(c), elements(r*c){
+        Matrix(size_t r, size_t c, double minimum, double maximum): total_rows(r), total_columns(c), elements(r*c){
             //static locks the local object creation (engine) in the memory, so whenever the function is called, the object remains the same, just its range is changed
             static thread_local std::mt19937 engine(std::random_device{}());// static in a local function preserves the variable and locks the initialization. can only be destroyed when the thread processing it ends (main()), 
                                                                             // thread local ensures the engine runs for each call separately (locally), preventing thread mixups while multithreading (processing multiple batches at once)
@@ -34,6 +35,8 @@ class Matrix{
             }
             
         }
+
+        Matrix(): total_rows(0), total_columns(0), elements(){}
 
         //elements and index access for row/col and index; essential for array element storage
 
@@ -73,22 +76,22 @@ class Matrix{
 
         //Matrix operations
 
-         //randomizes the elements using random library for weight matrix. eg, Matrix W(r,c,0.0); W.randomize() 
+        Matrix sum_columns()const;
 
-        Matrix transposed() const{}; //transposes the this matrix
+        Matrix transposed()const; //transposes the this matrix
 
-        static Matrix hadamard(const Matrix& first_matrix, const Matrix& second_matrix){};// symmetrical design; Matrix::Hadamard(A,B)
+        static Matrix hadamard(const Matrix& first_matrix, const Matrix& second_matrix); // symmetrical design; Matrix::hadamard(A,B)
 
-        Matrix& hadamard_inplace(const Matrix& other){}; //changes this matrix in place
+        Matrix& hadamard_inplace(const Matrix& other); //changes this matrix in place
 
-        Matrix operator *(const Matrix& other) {}; // Matrix Multiplication
+        Matrix operator *(const Matrix& other) const; // Matrix Multiplication
 
-        Matrix operator *(double num)const {}; // Scalar Multiplication
+        Matrix operator *(double num) const; // Scalar Multiplication
 
-        Matrix& operator *=(double num) {}; // Scalar Multiplication in place
+        Matrix& operator *=(double num); // Scalar Multiplication in place
 
-        Matrix operator +(const Matrix& other) {}; // Matrix Addition
+        Matrix operator +(const Matrix& other) const; // Matrix Addition
 
-        Matrix operator -(const Matrix& other) {}; // Matrix difference
+        Matrix operator -(const Matrix& other) const; // Matrix difference
 
 };

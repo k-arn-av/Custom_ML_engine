@@ -1,10 +1,21 @@
 #include "matrix.hpp"
 
+Matrix Matrix::sum_columns()const {
+    Matrix result_matrix(this->rows(),this->columns());
+    for (size_t r=0; r< this->rows(); ++r){
+        double sum=0.0;
+        for (size_t c=0; c< this->columns(); ++c){
+            sum+=(*this)(r,c);
+        }
+        result_matrix(r,0)= sum;
+    }
+    return result_matrix;
+}
     
-Matrix Matrix::transposed() const {
-    Matrix result_matrix(total_columns, total_rows);
-    for (size_t r = 0; r < total_rows; ++r) {
-        for (size_t c = 0; c < total_columns; ++c) {
+Matrix Matrix::transposed()const {
+    Matrix result_matrix(this->columns(), this->rows());
+    for (size_t r = 0; r < total_rows; ++r){
+        for (size_t c = 0; c < total_columns; ++c){
             result_matrix(c, r) = (*this)(r, c);
         }
     }
@@ -32,7 +43,8 @@ Matrix& Matrix::hadamard_inplace(const Matrix& other){
     return (*this);
 }
 
-Matrix Matrix::operator+ (const Matrix& other){
+Matrix Matrix::operator+ (const Matrix& other)const {
+
     if (this->rows() == other.rows() && this->columns() == other.columns()){ // Normal Matrix addition for same sized matrices
 
         Matrix result_matrix(this->rows(), this->columns());
@@ -58,7 +70,7 @@ Matrix Matrix::operator+ (const Matrix& other){
     throw std::invalid_argument("error");
 }
 
-Matrix Matrix::operator- (const Matrix& other) {
+Matrix Matrix::operator- (const Matrix& other)const {
     if (this->rows()!=other.rows()|| this->columns()!=other.columns()){
         throw std::invalid_argument("error");
     }
@@ -77,12 +89,20 @@ Matrix& Matrix::operator*= (double num) {
     return *this;
 }
 
+Matrix Matrix::operator*(double num)const {
+    Matrix result_matrix(this->rows(),this->columns());
+    for(size_t i=0;i<this->size();++i){ 
+        result_matrix[i]= num*(*this)[i];
+    }
+    return result_matrix;
+}
+
 // Matrix multiplication using r-k-c loop, because traversing by column every time is
 // more efficient than traversing by rows due to cpu cache locality (chunks of elements processing at once). Traversing by row is 
 // the worst, since cpu has to jump from one random space to another, and doing it at every step causes cache miss
 // k is the common row and column for first and second matrices, and k only increases row-by-row
 
-Matrix Matrix::operator* (const Matrix& other){
+Matrix Matrix::operator* (const Matrix& other)const {
     if (this->columns()!=other.rows()){
         throw std::invalid_argument("error");
     }
