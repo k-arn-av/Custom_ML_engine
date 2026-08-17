@@ -20,7 +20,9 @@ Moving on the next module, Layers Module- that takes the input matrix, and will 
 
 This is followed by the Activation Layer—that makes the output matrix non-linear by using the Rectified Linear Unit (ReLU) activation function (max(0, Output)), preventing output simplification and mathematical collapse.
 
-Moving next to the Loss Function—that calculates the initial error gradients required for training the model, followed by the Optimizer Module—that takes the learning rate and actually updates the weights.
+A Softmax Activation Layer is added as the final activation layer after the last Dense Layer, which uses softmax activation function (exponential fraction conversion) which is passed down to the loss function. 
+
+Moving next to the Loss Function (Cross Entropy)—that calculates the initial error gradients required for training the model, followed by the Optimizer Module—that takes the learning rate and actually updates the weights.
 
 Finally, tying it all together with the Network Layer—that manages the layers and runs the full pipeline.
 
@@ -40,6 +42,7 @@ Finally, tying it all together with the Network Layer—that manages the layers 
 ## Hierarchy
 
 ```
+Multi-Class Classification/ Pattern Recognition Based MLP
 +-------------------------------+
 |  Python High-Level Interface  |
 +-------------------------------+
@@ -48,21 +51,31 @@ Finally, tying it all together with the Network Layer—that manages the layers 
 |       pybind11 interop        |
 +-------------------------------+
                 |
-+---------------v---------------+        +-----------------------+         +--------------------------------+   
-|   C++ High-Performance Core   |------->| Matrix, Loss Function |-------->| Optimizer---> Gradient descent |
-+-------------------------------+        +--------------v--------+         +---------------v----------------+
-                |                                       |                                  |
-+---------------v---------------+                       |                                  |
-|      Network Layer(Manager)   |<----------------------------------------------------------                     
++---------------v---------------+        +-----------------------+            
+|   C++ High-Performance Core   |------->|         Matrix        |
++-------------------------------+        +--------------v--------+         
+                |                                       |                                  
++---------------v---------------+                       |                                  
+|      Network Layer(Manager)   |                       |
 +-------------------------------+                       |
                 |                                       |
 +---------------v---------------+                       |
-|            Layers             |                       |
-+-------------------------------+                       |
-                |                                       |
-+---------------v---------------+        +--------------v----------------+ 
-| Dense Layer, Activation Layer |<------>| Forward Pass, Backpropagation |
-+-------------------------------+        +-------------------------------+ 
+|            Layers             |<---------------------------------------------------------------------------------------------------------------------------------------- 
++-------------------------------+                                                                                                                                        |
+       | -------------------------------------------------------|                                                                                                        |
++------v------+  Forward Pass(FP)>, <Backpropagation(BP) +------v----------------+  FP,BP  +--------------------------------------------------------+                    |
+| Dense Layer | <--------------------------------------> | ReLU Activation Layer |<------->| Final Dense Layer Output(Z)-->Softmax Activation Layer |                    |
++-------------+                                          +-----------------------+         +----------------------------^---------------------------+                    |
+                                                                                                                       | Fraction conversion, Backpropagation Begin      |
+                                                                                                +----------------------v---------------------+                           |     
+                                                                                                |  Prediction-->Loss Function, Cross Entropy |                           |               
+                                                                                                +----------------------^---------------------+                           |
+                                                                                                                       |                                                 |
+                                                                                                        +--------------v-----------------+              SGD              |  
+                                                                                                        | Optimizer---> Gradient descent |--------------------------------
+                                                                                                        +--------------------------------+
+
+
 ```
 
 ---
