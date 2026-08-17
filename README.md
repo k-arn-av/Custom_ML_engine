@@ -43,6 +43,7 @@ Finally, tying it all together with the Network Layer—that manages the layers 
 
 ```
 Multi-Class Classification/ Pattern Recognition Based MLP
+
 +-------------------------------+
 |  Python High-Level Interface  |
 +-------------------------------+
