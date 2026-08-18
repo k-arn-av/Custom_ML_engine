@@ -78,6 +78,8 @@ class Matrix{
 
         Matrix sum_columns()const;
 
+        Matrix sum_rows()const;
+
         Matrix transposed()const; //transposes the this matrix
 
         static Matrix hadamard(const Matrix& first_matrix, const Matrix& second_matrix); // symmetrical design; Matrix::hadamard(A,B)
@@ -86,7 +88,7 @@ class Matrix{
 
         Matrix operator *(const Matrix& other) const; // Matrix Multiplication
 
-        Matrix operator *(double num) const; // Scalar Multiplication
+        Matrix operator *(const double num) const; // Scalar Multiplication
 
         Matrix& operator *=(double num); // Scalar Multiplication in place
 

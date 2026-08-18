@@ -1,13 +1,25 @@
 #include "matrix.hpp"
 
 Matrix Matrix::sum_columns()const {
-    Matrix result_matrix(this->rows(),this->columns());
+    Matrix result_matrix(this->rows(), 1);
     for (size_t r=0; r< this->rows(); ++r){
         double sum=0.0;
         for (size_t c=0; c< this->columns(); ++c){
             sum+=(*this)(r,c);
         }
         result_matrix(r,0)= sum;
+    }
+    return result_matrix;
+}
+
+Matrix Matrix::sum_rows()const {
+    Matrix result_matrix(1, this->columns());
+    for (size_t c=0; c< this->columns(); ++c){
+        double sum=0.0;
+        for (size_t r=0; r< this->rows(); ++r){
+            sum += (*this)(r,c);
+        }
+        result_matrix(0,c) = sum;
     }
     return result_matrix;
 }
@@ -55,13 +67,13 @@ Matrix Matrix::operator+ (const Matrix& other)const {
         return result_matrix;  
     }
 
-    if (this->rows() == other.rows() && other.columns() == 1){ // specifically for bias addition (broadcasting) Z=WX+B where bias is column matrix, WX is this, while B is other
-         
+    if (this->columns() == other.columns() && other.rows() == 1){ // specifically for bias addition (broadcasting) Z=XW+B where bias is a row vector and W is features x neurons
+
         Matrix result_matrix(this->rows(), this->columns());
 
         for (size_t r=0; r< this->rows(); ++r){
             for (size_t c=0; c< this->columns(); ++c){
-                result_matrix(r,c)= (*this)(r,c)+ other[r];
+                result_matrix(r,c)= (*this)(r,c)+ other(0,c);
             }
         }
         return result_matrix;
@@ -89,7 +101,7 @@ Matrix& Matrix::operator*= (double num) {
     return *this;
 }
 
-Matrix Matrix::operator*(double num)const {
+Matrix Matrix::operator*(const double num)const {
     Matrix result_matrix(this->rows(),this->columns());
     for(size_t i=0;i<this->size();++i){ 
         result_matrix[i]= num*(*this)[i];
