@@ -1,6 +1,5 @@
 #pragma once
 #include "Layer.hpp"
-#include <iostream>
 
 class DenseLayer: public Layer{
 
@@ -13,12 +12,12 @@ class DenseLayer: public Layer{
 
     public:
         DenseLayer(std::string n, size_t neurons, size_t input_features): name(std::move(n)),
-        W(neurons, input_features, -std::sqrt(6.0/(input_features+neurons)), std::sqrt(6.0/(input_features+neurons))),
+        W(input_features, neurons, -std::sqrt(6.0/(input_features+neurons)), std::sqrt(6.0/(input_features+neurons))),
         // range calculation using Xavier Uniform Initialization that calculates boundaries using variance formula: a^2/3= 2/input_features+neurons where a is the given boundary, weights should be +- equal range
-        // this formula ensures the boundaries set are correct for given rows and columns (neurons and features) so that the weights are in a suitable range to train the model
-        dW(neurons, input_features), 
-        B(neurons, 1), // Bias is zero matrix at first. 
-        dB(neurons, 1){}
+        // this formula ensures the boundaries set are correct for given rows and columns (features and neurons) so that the weights are in a suitable range to train the model
+        dW(input_features, neurons), 
+        B(1, neurons), // Bias is zero row vector: one value per output neuron.
+        dB(1, neurons){}
 
         Matrix feedforward(const Matrix& input) override;
         
@@ -34,6 +33,14 @@ class DenseLayer: public Layer{
         const Matrix& Bias() const {return B;}
 
         const Matrix &weightGradients() const {return dW;}
-        const Matrix &biasGradients() const {return dB;}    
+        const Matrix &biasGradients() const {return dB;}
+        
+        std::vector<Matrix*> getWeight_Bias()override {
+        return {&W, &B}; // Hand over memory addresses of W and B
+        }
+
+        std::vector<Matrix*> get_gradients() override {
+            return {&dW, &dB}; // Hand over memory addresses of the gradients
+        }
 
 };

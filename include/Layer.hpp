@@ -14,4 +14,8 @@ class Layer{
                                                             // meaning you can never create its objects like Layer layer1(). input passed should be assigned to the input matrix X
         virtual Matrix feedbackward(const Matrix& output_gradient)=0;
 
+        //virtual functions that need to filter out weights and biases for Layers needed for optimizer, Denselayer overrides it, while ReLU returns nothing
+        virtual std::vector<Matrix*> getWeight_Bias(){return {};}
+        virtual std::vector<Matrix*> get_gradients() { return {};}
+
 };
