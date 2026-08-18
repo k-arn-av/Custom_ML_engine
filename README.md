@@ -12,7 +12,9 @@ I am building this project to gain a deep, foundational understanding of core de
 
 ## Current Status: Active Development
 
-Currently Working on **Activation Layer module**; finished Matrix, Layer and Dense Layer Modules. 
+Currently Working on **Optimizer Module**. 
+
+**Algorithm for the Project**
 
 The project started with Matrix Module, that covers every operations necessary for Linear Calculations. It uses a std::vector container to store the 2D matrix into a flat 1D array, to boost CPU cache locality. I have ensured that all operations are math friendly using operator function, like Mat(r,c) to get the data on that row and column or A*B for matrix multiplication. This module changed from using nested vectors to a 1D vector, adding more needed operations like sum_columns(), allowed for weight matrix random creation using mt19937 engine and calculated weight range using Xavier's Uniform Initialization.
 
@@ -20,11 +22,11 @@ Moving on the next module, Layers Module- that takes the input matrix, and will 
 
 This is followed by the Activation Layer—that makes the output matrix non-linear by using the Rectified Linear Unit (ReLU) activation function (max(0, Output)), preventing output simplification and mathematical collapse.
 
-A Softmax Activation Layer is added as the final activation layer after the last Dense Layer, which uses softmax activation function (exponential fraction conversion) which is passed down to the loss function. 
+Next comes the loss function (Cross Entropy)- that is combined with Softmax Activation function (exponential fraction conversion, converting the nogits/preactivation into probabilities) to calculate the scalar loss that will be used by the optimizer module. For backpropagation, this module calculates the error Matrix (dX/dZ) to feed backward and acts as a starting point for the output and input gradient pass down. Main reason to combine both softmax activation and loss function CE is because the equations by softmax fed into loss function cancels out each other later to form a simple formula similar to Mean Squared Error (MSE), 1/batches(prediction- target). So using this formula will make the engine less prone to errors during exponent and logarithmic calculations.
 
-Moving next to the Loss Function (Cross Entropy)—that calculates the initial error gradients required for training the model, followed by the Optimizer Module—that takes the learning rate and actually updates the weights.
+The loss from the loss module (SoftmaxCE) is then fed into the optimizer matrix, which then calculates the new weights for denselayers, and updates them. For this, network manager has to place each created layers sequentially for the optimizer to loop through them. Starting with vanilla gradient descent (SGD), I will update the optimizer later for momentum and ADAM to work.
 
-Finally, tying it all together with the Network Layer—that manages the layers and runs the full pipeline.
+Network Manager owns all the layers, and manages them sequentially. 
 
 --- 
 
