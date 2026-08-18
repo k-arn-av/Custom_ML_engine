@@ -36,11 +36,11 @@ double SoftmaxCrossentropy::calculate_loss(const Matrix& final_preactivation, co
 
         for (size_t c=0; c<final_preactivation.columns(); ++c){ // fourth column loop to calculate the sum of all loss in the matrix
 
-            loss-= target_matrix(r,c)*(std::log(saved_probabilities(r,c)+ 1e-15)); //
-        }
+            loss-= target_matrix(r,c)*(std::log(saved_probabilities(r,c)+ 1e-15)); // Loss= - sum(target_matrix* log(saved probabilities + 1e-15)); 
+        }                                                                          // 1e-15(epsilon) is added as a small number to not let the log of exponents to reach 0.0
     }
-    
-    double batchLoss=loss/double(target_matrix.rows());
+
+    double batchLoss=loss/double(final_preactivation.rows()); //batch loss for all samples (rows)
 
     return batchLoss;
 
@@ -48,7 +48,8 @@ double SoftmaxCrossentropy::calculate_loss(const Matrix& final_preactivation, co
 
 Matrix SoftmaxCrossentropy::feedbackward(const Matrix& target_matrix){
 
-    Matrix errorMatrix= (saved_probabilities-target_matrix)*(1.0/target_matrix.rows());
+    //using sofmax+CE in one module is easier than putting them separately, since their equations cancel each other later to form the below formula
+    Matrix errorMatrix= (saved_probabilities-target_matrix)*(1.0/target_matrix.rows()); // error Matrix= 1/batches*(Y(predict)-Y(target)), main reason to use softmaxCE 
 
     return errorMatrix; // error matrix is the outputgradient dZ for receiving matrices, and inputgradient dX for giving matrices during backpropagation
 }
