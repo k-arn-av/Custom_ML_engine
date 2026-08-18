@@ -32,7 +32,7 @@ Network Manager owns all the layers, and manages them sequentially.
 
 ## Highlights
 
-- **Custom Matrix & Linear Algebra Operations:** Optimized memory layouts and custom matrix multiplication algorithms.
+- **Custom Matrix & Linear Algebra Operations:** Optimized memory layouts and custom matrix multiplication algorithms. Uses row-major order of matrices for maximum performance, where rows are neurons/batches, and columns are features.
 - **Data Oriented Approach:** Uses contiguous data structure(std::vector) to maximize CPU cache locality to perform multiple operations at once by taking advantage of SIMD (Single Instruction Multiple Data).
 - **Mathematical Optimization & Manual Backpropagation.:** Custom implementation of forward and backward passes.
 - **Modular Neural Network Components:** Support for custom layers, activation functions, gradient optimizer and loss functions.
