@@ -12,7 +12,7 @@ I am building this project to gain a deep, foundational understanding of core de
 
 ## Current Status: Active Development
 
-Currently Working on **Optimizer Module**. 
+Currently Working on **pybind11**. 
 
 **Algorithm for the Project**
 
@@ -28,6 +28,7 @@ The loss from the loss module (SoftmaxCE) is then fed into the optimizer matrix,
 
 Network Manager owns all the layers, and manages them sequentially. 
 
+**Model Training** will be done in python via pybind11.
 --- 
 
 ## Highlights
