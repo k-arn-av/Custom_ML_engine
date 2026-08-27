@@ -29,6 +29,7 @@ The loss from the loss module (SoftmaxCE) is then fed into the optimizer matrix,
 Network Manager owns all the layers, and manages them sequentially. 
 
 **Model Training** will be done in python via pybind11.
+
 --- 
 
 ## Highlights
@@ -86,13 +87,13 @@ Multi-Class Classification/ Pattern Recognition Based MLP
 
 ## Future Upgrades in Mind
 
-**BitNet b1.58 (first choice):** Removing Tensor calculations and floating point multiplications entirely with primitive datatypes doing addition and subtraction. Significantly reduces the load in CPU. Weights are in the range [-1,0,1] (1.58 bits total) instead of double (8 bytes each)
+**BitNet b1.58 (first choice):** Removing floating point multiplications entirely with primitive datatypes doing addition and subtraction. Significantly reduces the load in CPU. Weights are in the range [-1,0,1] (1.58 bits total) instead of double (8 bytes each)
 - Maximizes SIMD (AVX2 CPU component) capacity through multi simple calculations.
   
-- **CUDA kernels:** Enables the GPU to perform SIMT (Single Instruction Multiple Threads) for multi Tensor calculations (floating point multiplications) that CPU cannot fast enough. Significantly reduces the training time.
+**CUDA kernels (second choice):** Enables the GPU to perform SIMT (Single Instruction Multiple Threads) for multi Tensor calculations (floating point multiplications) that CPU cannot fast enough. Significantly reduces the training time.
   
-- **nanobind:** Python bindings especially for modern C++ and Python. Extremely lightweight library compared to pybind11, and compiles 3x faster.
+**nanobind:** Python bindings especially for modern C++ and Python. Extremely lightweight library compared to pybind11, and compiles 3x faster.
 - **Optimizers:** Momentum and RMSprop/ ADAM optimizer to fix weights and learning rate for each step in the training process (Gradient Descent upgrade), but is heavier than vanilla SGD (higher processing power needed).
-
-- **Transformer Architecture (first choice):** The final goal to convert this MLP engine to a Large Language Model, combining multiple MLPS and performing the same architecture (mathematical). Uses backpropagation and Gradient Descent to reach the target.
-- **NeuroEvolution Architecture (second choice):** Another choice to make generational Model that comes from reproduction (not literal) from two parent neural networks to be able to reach the target.
+  
+**Transformer Architecture (first choice):** The final goal to convert this MLP engine to a Large Language Model, combining multiple MLPS and performing the same architecture (mathematical). Uses backpropagation and Gradient Descent to reach the target.
+**NeuroEvolution Architecture (second choice):** Another choice to make generational Model that comes from reproduction (not literal) from two parent neural networks to be able to reach the target.
