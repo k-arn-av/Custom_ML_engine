@@ -10,13 +10,15 @@ class Network{
     private:
         std::vector<std::unique_ptr<Layer>>layers;
         SoftmaxCrossentropy lossfunction;
-        std::unique_ptr<optimizer> active_optimizer;
+        std::unique_ptr<optimizer> active_optimizer;// allows for active_optimizer=std::make_unique<child>();
     
     public:
-        template <typename T, typename... arguments>
-        T& create_layer(arguments&&... other_arguments){
+        Network()=default;
+        
+        template <typename T, typename... Args>
+        T& create_layer(Args&&...args){
 
-            std::unique_ptr<Layer> layer= std::make_unique<T> (std::forward<arguments>(other_arguments)...);
+            std::unique_ptr<Layer> layer= std::make_unique<T> (std::forward<Args>(args)...);
             T& reference=*layer;
             layers.push_back(std::move(layer));
             return reference;
