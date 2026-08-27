@@ -12,7 +12,7 @@ I am building this project to gain a deep, foundational understanding of core de
 
 ## Current Status: Active Development
 
-Currently Working on **pybind11**. 
+Currently Working on **python main training file**. 
 
 **Algorithm for the Project**
 
