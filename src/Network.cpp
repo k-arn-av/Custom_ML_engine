@@ -20,21 +20,11 @@ void Network::train_model(const Matrix& input_matrix, const Matrix& target){
     //BACKPROPAGATION, starting from lossfunction's feedbackward, that analyzes loss gradient for each layer, starting from final denselayer
     Matrix error_gradient=lossfunction.feedbackward(target);
 
-    for (size_t i=layers.size()-1; i>=0; --i){
+    for (auto it= layers.rbegin(); it != layers.rend(); ++it){ // reverse loop from end to start, where "it" is vector's internal pointer
 
-        error_gradient=layers[i]->feedbackward(error_gradient);
+        error_gradient= (*it)->feedbackward(error_gradient); 
     }
     //OPTIMIZER CALL
-
-
-
-
-
-
-
-
-
-
-
+    active_optimizer->GradientDescent(layers);
 
 }
