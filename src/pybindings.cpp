@@ -12,6 +12,13 @@
 
 namespace py= pybind11; //nanobind uses namespace py= nanobind (I only found out about nanobind after completing this)
 
+
+//Basic Syntax for pybind11: 
+
+// .def(py::init<(datatype)>(), py::arg("(argument)"))-> constructor
+// .def("functionName", &class:: function)-> normal function call where cpp and py sync 
+// .def("functionName", [](parameters){return},py::arg("") (or anything extra))-> lambda function to act where py and cpp arent in sync (uniqueptr, return by reference, element acessing (dunders), template varidic)
+
 PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
     m.doc()= "MLP engine";
 
@@ -133,7 +140,7 @@ PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
 
         .def(py::init<>())
 
-        //set optimizer
+        //set optimizer Lambda middleman function to imitate unique ptr in py 
         .def("setOptimizer", [](Network& self, std::unique_ptr<optimizer> opt){
             self.setOptimizer(std::move(opt));
         }, py::arg("optimizer"))
