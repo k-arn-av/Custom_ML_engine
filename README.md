@@ -87,7 +87,7 @@ Multi-Class Classification/ Pattern Recognition Based MLP
 
 ## Future Upgrades in Mind
 
-**BitNet b1.58 (first choice):** Removing floating point multiplications entirely with primitive datatypes doing addition and subtraction. Significantly reduces the load in CPU. Weights are in the range [-1,0,1] (1.58 bits total) instead of double (8 bytes each). Maximizes SIMD (AVX2 CPU component) capacity through multi simple calculations.
+**BitNet b1.58 (first choice):** Removing floating point multiplications entirely with primitive int_8t datatypes doing addition and subtraction. Significantly reduces the load in CPU. Weights are in the range [-1,0,1] (1.58 bits total) instead of double (8 bytes each). Maximizes SIMD (AVX2 CPU component) capacity through multi simple calculations.
   
 **CUDA kernels (second choice):** Enables the GPU to perform SIMT (Single Instruction Multiple Threads) for multi Tensor calculations (floating point multiplications) that CPU cannot fast enough. Significantly reduces the training time.
   
