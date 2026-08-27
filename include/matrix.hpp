@@ -16,6 +16,7 @@ class Matrix{
         //second that fills in the input matrix data for later use when feedforward, uses initializer list to bypass vector initialization repitition
         //third that creates a matrix with random numbers from the given range min and max using Mersenne Twister engine
         //fourth that creates an empty matrix for initialization without value declaration
+        
         Matrix(size_t r, size_t c, double initial_val=0.0): total_rows(r), total_columns(c), elements(r*c,initial_val){}
 
         Matrix(size_t r, size_t c, std::initializer_list<double> user_data): total_rows(r), total_columns(c), elements(user_data){
@@ -38,6 +39,7 @@ class Matrix{
 
         Matrix(): total_rows(0), total_columns(0), elements(){}
 
+
         //elements and index access for row/col and index; essential for array element storage
 
         size_t getIndex(size_t row, size_t col)const { return (row * total_columns)+col;} //row-major order for index tracking, more efficient to prevent cache miss
@@ -49,7 +51,7 @@ class Matrix{
         //2D Accessors
 
         double& operator()(size_t row, size_t col) { //returns reference to be able to change the value
-            return elements[getIndex(row,col)]; //users call Mat(r,c) to access element
+            return elements[getIndex(row,col)]; //users call Mat(r,c)= val to access and modify element
         }
         
         const double& operator()(size_t row, size_t col) const { 
