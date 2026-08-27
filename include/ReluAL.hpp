@@ -12,6 +12,8 @@ class Relu: public Layer{ //input matrix becomes preactivation (Z)
         Matrix feedforward(const Matrix& preActivation) override; //Z(i)
 
         Matrix feedbackward(const Matrix& output_gradient) override;
+
+        const std::string& getName() const {return name;}
     
 };
 
