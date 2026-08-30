@@ -11,13 +11,14 @@ class DenseLayer: public Layer{
         Matrix dB;// Bias Gradient Matrix, calculated later
 
     public:
-        DenseLayer(std::string n, size_t neurons, size_t input_features): name(std::move(n)),
-        W(input_features, neurons, -std::sqrt(6.0/(input_features+neurons)), std::sqrt(6.0/(input_features+neurons))),
-        // range calculation using Xavier Uniform Initialization that calculates boundaries using variance formula: a^2/3= 2/input_features+neurons where a is the given boundary, weights should be +- equal range
-        // this formula ensures the boundaries set are correct for given rows and columns (features and neurons) so that the weights are in a suitable range to train the model
-        dW(input_features, neurons), 
-        B(1, neurons), // Bias is zero row vector: one value per output neuron.
-        dB(1, neurons){}
+        DenseLayer(std::string n, size_t input_features, size_t neurons): name(std::move(n)),
+        
+            W(input_features, neurons, -std::sqrt(6.0/(input_features+neurons)), std::sqrt(6.0/(input_features+neurons))),
+            // range calculation using Xavier Uniform Initialization that calculates boundaries using variance formula: a^2/3= 2/input_features+neurons where a is the given boundary, weights should be +- equal range
+            // this formula ensures the boundaries set are correct for given rows and columns (features and neurons) so that the weights are in a suitable range to train the model
+            dW(input_features, neurons), 
+            B(1, neurons), // Bias is zero row vector: one value per output neuron.
+            dB(1, neurons){}
 
         Matrix feedforward(const Matrix& input) override;
         
@@ -36,7 +37,7 @@ class DenseLayer: public Layer{
         const Matrix &biasGradients() const {return dB;}
         
         std::vector<Matrix*> getWeight_Bias()override {
-        return {&W, &B}; // Hand over memory addresses of W and B
+            return {&W, &B}; // Hand over memory addresses of W and B
         }
 
         std::vector<Matrix*> get_gradients() override {

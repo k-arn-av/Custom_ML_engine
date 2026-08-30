@@ -19,9 +19,9 @@ class Matrix{
         
         Matrix(size_t r, size_t c, double initial_val=0.0): total_rows(r), total_columns(c), elements(r*c,initial_val){}
 
-        Matrix(size_t r, size_t c, std::initializer_list<double> user_data): total_rows(r), total_columns(c), elements(user_data){
-            if (elements.size() != r * c){
-                throw std::invalid_argument("Error: Initialization list size does not match matrix dimensions.");
+        Matrix(size_t r, size_t c, std::vector<double> user_data): total_rows(r), total_columns(c), elements(user_data){
+            if (elements.size()!= r* c){
+                throw std::invalid_argument("Error: User given vector's size does not match matrix dimensions.");
             }
         }
 
