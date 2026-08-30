@@ -1,10 +1,32 @@
 #include "Network.hpp"
 
-void Network::setOptimizer(std::unique_ptr<optimizer> newOptimizer){
-    active_optimizer=std::move(newOptimizer);
+DenseLayer& Network::add_DenseLayer(std::string name, size_t neurons){
+    if (current_feature_size== 0){
+        throw std::runtime_error("Call set_input_size first.");}
+    //generate, auto allocate, auto set input feature, return accessible reference
+    auto layer = std::make_unique<DenseLayer>(name, current_feature_size, neurons);
+    DenseLayer& ref= *layer;
+    current_feature_size= layer->Weights().columns();
+    layers.push_back(std::move(layer));
+    return ref;
 }
 
-void Network::train_model(const Matrix& input_matrix, const Matrix& target){
+ Relu& Network::add_ReluLayer(std::string name){
+    auto layer= std::make_unique<Relu>(name);
+    Relu& ref= *layer;
+    layers.push_back(std::move(layer));
+    return ref;
+}
+
+void Network::setCurrentfeature(size_t input_feature){
+    current_feature_size=input_feature;
+}
+
+void Network::setOptimizer(std::shared_ptr<optimizer> newOptimizer){
+    active_optimizer=newOptimizer;
+}
+
+double Network::train_model(const Matrix& input_matrix, const Matrix& target){
 
     //FEED FORWARD, keeps creating outputs for one layer and input for another layer until last denselayer
     Matrix current_data=input_matrix;
@@ -27,4 +49,5 @@ void Network::train_model(const Matrix& input_matrix, const Matrix& target){
     //OPTIMIZER CALL
     active_optimizer->GradientDescent(layers);
 
+    return loss;
 }

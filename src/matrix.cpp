@@ -1,4 +1,5 @@
 #include "matrix.hpp"
+#include <string>
 
 Matrix Matrix::sum_columns()const {
     Matrix result_matrix(this->rows(), 1);
@@ -116,7 +117,9 @@ Matrix Matrix::operator*(const double num)const {
 
 Matrix Matrix::operator* (const Matrix& other)const {
     if (this->columns()!=other.rows()){
-        throw std::invalid_argument("error");
+        std::string error_msg = "Matmul error: Left cols (" + std::to_string(this->columns()) + 
+                            ") != Right rows (" + std::to_string(other.rows()) + ")";
+        throw std::invalid_argument(error_msg);
     }
     Matrix result_matrix(this->rows(),other.columns());
 

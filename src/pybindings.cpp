@@ -11,7 +11,7 @@
 #include "SoftmaxCE.hpp"
 
 namespace py= pybind11; //nanobind uses namespace py= nanobind (I only found out about nanobind after completing this)
-
+//using py:: instead of pybind11::
 
 //Basic Syntax for pybind11: 
 
@@ -31,7 +31,7 @@ PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
         .def(py::init<size_t, size_t, double>(), //main matrix constructor for calculation
             py::arg("r"), py::arg("c"), py::arg("initial_value")=0.0)
 
-        .def(py::init<size_t, size_t, std::initializer_list<double>>(), //already initialized vector constructor
+        .def(py::init<size_t, size_t, std::vector<double>>(), //already given vector constructor
             py::arg("r"), py::arg("c"), py::arg("user_data"))
 
         .def(py::init<size_t, size_t, double, double>(), //random weight generator constructor 
@@ -70,7 +70,7 @@ PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
         .def("sum_columns", &Matrix::sum_columns)
         .def("sum_rows", &Matrix::sum_rows)
         .def("transposed", &Matrix::transposed)
-        .def("hadamard", &Matrix::hadamard, py::arg("first_matrix"), py::arg("second_matrix"))
+        .def_static("hadamard", &Matrix::hadamard, py::arg("first_matrix"), py::arg("second_matrix")) //def static for static member access
         .def("hadamard_inplace", &Matrix::hadamard_inplace, py::arg("other"))
 
     //Operator 
@@ -78,7 +78,6 @@ PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
         .def(py::self- py::self)
         .def(py::self* py::self) //matmul
         .def(py::self* double()) //scalar matmul
-        .def(double()* py::self)  //reverse scalar matmul
         .def(py::self*= double()); //in place scalar matmul
     
     //Layer abstract base class bindings
@@ -117,19 +116,21 @@ PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
     
     //SoftmaxCE loss layer bindings
     py::class_<SoftmaxCrossentropy>(m, "SoftmaxCE")
+        
+        .def(py::init<>())
 
         .def("calculate_loss", &SoftmaxCrossentropy::calculate_loss)
         .def("feedbackward", &SoftmaxCrossentropy::feedbackward);
     
 
-    //Optimizer abstract base class bindings
-    py::class_<optimizer>(m, "optimizer")
+    //Optimizer abstract base class bindings, explictly telling python that its shared ptr, so reference count +=1 for py then cpp
+    py::class_<optimizer, std::shared_ptr<optimizer>>(m, "optimizer")
 
        .def("GradientDescent", &optimizer::GradientDescent);
     
 
     //Vanilla SGD bindings
-    py::class_<SGD, optimizer>(m, "SGD")
+    py::class_<SGD, optimizer,std::shared_ptr<SGD>>(m, "SGD")
         
         .def(py::init<double>(),
             py::arg("LR"));
@@ -140,21 +141,17 @@ PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
 
         .def(py::init<>())
 
+        //create layers bindings
+        .def("addDenseLayer", &Network::add_DenseLayer, py::return_value_policy::reference_internal)
+        .def("addReluLayer", &Network::add_ReluLayer, py::return_value_policy::reference_internal)
+
+        //set current Input feature for denselayers
+        .def("setCurrentfeature", &Network::setCurrentfeature, py::arg("input_feature"))
+
         //set optimizer Lambda middleman function to imitate unique ptr in py 
-        .def("setOptimizer", [](Network& self, std::unique_ptr<optimizer> opt){
+        .def("setOptimizer", [](Network& self, std::shared_ptr<optimizer> opt){
             self.setOptimizer(std::move(opt));
         }, py::arg("optimizer"))
-
-        //return reference
-        //create a middleman lambda function since template is blueprint only, and python requires cpp compiler to complile exact create_layer during cmake build
-        .def("create_DenseLayer", [](Network& self, const std::string& name, size_t neurons, size_t features)->DenseLayer& {
-            return self.create_layer<DenseLayer>(name, neurons, features);
-        }, py::return_value_policy::reference_internal) // prohibits python to delete the literal layer from Layers vector inside Network, and lets Network handle it
-        
-        .def("create_ReluLayer", [](Network& self, const std::string& name)->Relu& {
-            return self.create_layer<Relu>(name);
-
-        }, py::return_value_policy::reference_internal)
         
 
         //train model binding
