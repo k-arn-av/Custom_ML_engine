@@ -6,7 +6,7 @@ A lightweight machine learning engine built from scratch to demonstrate custom n
 
 ## Overview
 
-I am building this project to gain a deep, foundational understanding of core deep learning primitives, manual differentiation, and low-level matrix operations, implementing a complete Multi-Layer Perceptron (MLP) architecture from scratch without third-party ML dependencies.
+I am building/updating this project to gain a deep, foundational understanding of core deep learning primitives, manual differentiation, and low-level matrix operations, implementing a complete Multi-Layer Perceptron (MLP) architecture from scratch without third-party ML dependencies. I will keep updating and improving this engine to be able to perform categorization.
 
 ---
 
@@ -28,7 +28,7 @@ The loss from the loss module (SoftmaxCE) is then fed into the optimizer matrix,
 
 Network Manager owns all the layers, and manages them sequentially. 
 
-**Model Training** will be done in python via pybind11.
+**Model Training** is done in python/ main.py via pybind11.
 
 --- 
 
