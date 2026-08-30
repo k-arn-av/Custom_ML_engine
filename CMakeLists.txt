@@ -49,6 +49,9 @@ set(SOURCES
 #define Pybind11 Extension Module (.pyd on Windows)
 pybind11_add_module(Custom_ML ${SOURCES})
 
+#linker special commands to force libraries into the .pyd file
+target_link_options(Custom_ML PRIVATE "-static" "-static-libgcc" "-static-libstdc++")
+
 #tell CMake where to find header files (.hpp) in include/, use target for modern CPP isolation
 target_include_directories(Custom_ML PRIVATE include)
 
