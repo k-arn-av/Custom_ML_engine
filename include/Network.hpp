@@ -5,27 +5,30 @@
 #include "optimizer.hpp"
 #include "Layer.hpp"
 #include <memory>
+#include <type_traits>
 
 class Network{
     private:
         std::vector<std::unique_ptr<Layer>>layers;
         SoftmaxCrossentropy lossfunction;
-        std::unique_ptr<optimizer> active_optimizer;// allows for active_optimizer=std::make_unique<child>();
-    
+
+        //Note, creating unique ptr object in py causes double free error, so used shared ptr for both cpp and py to work
+        std::shared_ptr<optimizer> active_optimizer;// allows for active_optimizer=std::make_unique<child>();
+        size_t current_feature_size=0;
+
     public:
         Network()=default;
-        
-        template <typename T, typename... Args>
-        T& create_layer(Args&&...args){
 
-            std::unique_ptr<Layer> layer= std::make_unique<T> (std::forward<Args>(args)...);
-            T& reference=*layer;
-            layers.push_back(std::move(layer));
-            return reference;
-        }
+        //current_feature size setter for auto input_feature calculation in compiletime for denseLayers
+        void setCurrentfeature(size_t input_feature);
 
-        void setOptimizer(std::unique_ptr<optimizer> newOptimizer);
+        //optimizer setter function
+        void setOptimizer(std::shared_ptr<optimizer> newOptimizer);
 
-        void train_model(const Matrix& input_matrix, const Matrix& target_matrix);
+        DenseLayer& add_DenseLayer(std::string name, size_t neurons);
+            
+        Relu& add_ReluLayer(std::string name);
+           
+        double train_model(const Matrix& input_matrix, const Matrix& target_matrix);
 
 };
