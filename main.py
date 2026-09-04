@@ -22,27 +22,28 @@ def main():
         1.0, 1.0   # Inputs for 1 OR 1 -> aligns with row 4 of targets
     ])
 
-    #4 rows/batches, 2 columns/classes. 
-    #[1.0, 0.0] means False. [0.0, 1.0] means True.
-    targets = Custom_ML.Matrix(4, 1, [
-        0.0,  # 0 OR 0 = 0
-        1.0,  # 0 OR 1 = 1
-        1.0,  # 1 OR 0 = 1
-        1.0   # 1 OR 1 = 1
+    #Targets: 4 samples, 2 classes (One-Hot Encoded)
+    #[1.0, 0.0] represents class 0 (False)
+    #[0.0, 1.0] represents class 1 (True)
+    targets = Custom_ML.Matrix(4, 2, [
+        1.0, 0.0,  # 0 XOR 0 = 0
+        0.0, 1.0,  # 0 XOR 1 = 1
+        0.0, 1.0,  # 1 XOR 0 = 1
+        1.0, 0.0   # 1 XOR 1 = 0
     ])
     
     network=Custom_ML.Network() #create network object
 
-    SGD= Custom_ML.SGD(0.01)
+    SGD= Custom_ML.SGD(0.05)
 
     network.setOptimizer(SGD)
 
     network.setCurrentfeature(2)
 
     #automatically pushed into network vector
-    network.addDenseLayer("dense1", 4) #creates W(2*4), 4 is neurons
+    network.addDenseLayer("dense1", 8) #creates W(2*4), 8 is neurons
     network.addReluLayer("relu1")
-    network.addDenseLayer("dense2", 1)
+    network.addDenseLayer("dense2", 2)
 
 
     #loop to train model, return loss after each gradient descent
@@ -56,7 +57,7 @@ def main():
         epoch+=1
 
         #added an emergengy break
-        if epoch>10000:
+        if epoch>15000:
             print("Hit max epochs. Stopping.")
             break
 
