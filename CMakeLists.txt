@@ -6,14 +6,16 @@ project(Custom_ML LANGUAGES CXX)
 #modern c++ standard
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 #NOTE: IMPORTED PYTHON AND PYBIND11 MANUALLY FROM PATH BECAUSE CMAKE COULDNT FIND THEM (SHUCKS), WHICH CAUSED ERROR USING PYBIND11
 #use the Python installation containing Python.h and pybind11.
-set(Python_ROOT_DIR "C:/Users/arnav/AppData/Local/Python/pythoncore-3.14-64")
-set(Python_EXECUTABLE "${Python_ROOT_DIR}/python.exe")
-set(pybind11_DIR "${Python_ROOT_DIR}/Lib/site-packages/pybind11/share/cmake/pybind11")
-
+if (WIN32)
+    set(Python_ROOT_DIR "C:/Users/arnav/AppData/Local/Python/pythoncore-3.14-64")
+    set(Python_EXECUTABLE "${Python_ROOT_DIR}/python.exe")
+    set(pybind11_DIR "${Python_ROOT_DIR}/Lib/site-packages/pybind11/share/cmake/pybind11")
+endif()
 
 #find Python.h and the Python module target used by pybind11.
 find_package(Python REQUIRED COMPONENTS Interpreter Development.Module)
@@ -49,8 +51,10 @@ set(SOURCES
 #define Pybind11 Extension Module (.pyd on Windows)
 pybind11_add_module(Custom_ML ${SOURCES})
 
+if (WIN32 AND MINGW)
 #linker special commands to force libraries into the .pyd file
 target_link_options(Custom_ML PRIVATE "-static" "-static-libgcc" "-static-libstdc++")
+endif()
 
 #tell CMake where to find header files (.hpp) in include/, use target for modern CPP isolation
 target_include_directories(Custom_ML PRIVATE include)
