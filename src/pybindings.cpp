@@ -124,9 +124,7 @@ PYBIND11_MODULE(Custom_ML, m){ //python will import Custom_ML
     
 
     //Optimizer abstract base class bindings, explictly telling python that its shared ptr, so reference count +=1 for py then cpp
-    py::class_<optimizer, std::shared_ptr<optimizer>>(m, "optimizer")
-
-       .def("GradientDescent", &optimizer::GradientDescent);
+    py::class_<optimizer, std::shared_ptr<optimizer>>(m, "optimizer");
     
 
     //Vanilla SGD bindings
