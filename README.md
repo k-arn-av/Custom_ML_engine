@@ -12,7 +12,9 @@ I am building/updating this project to gain a deep, foundational understanding o
 
 ## Current Status: Active Development
 
-Currently Working on **python main training file**. 
+**XOR Classification** (2→8→2 MLP with ReLU + Softmax-CE) is working and converges with a learning rate of 0.05. **Profiling** complete with Cachegrind and Memcheck — see the [Benchmarks & Profiling](#benchmarks--profiling) section below.
+
+**Next:** Multi-class classification support. 
 
 **Algorithm for the Project**
 
@@ -82,6 +84,26 @@ Multi-Class Classification/ Pattern Recognition Based MLP
 
 
 ```
+
+---
+
+## Benchmarks & Profiling
+
+The Matrix module's core design decision — a contiguous 1D `std::vector` with row-major indexing instead of `std::vector<std::vector<double>>` — was validated with a standalone benchmark and Valgrind Cachegrind (a cache-behavior simulator, since hardware performance counters aren't reliably available in every environment).
+
+**Method:** Same algorithm, same loop order (r-k-c for matrix multiplication), same data — only the storage layout changes between the contiguous and nested implementations.
+
+**Headline result:** the contiguous layout produced **82.7% fewer last-level cache misses** than the nested-vector baseline on 1024×1024 matrix multiplication, where the matrix data exceeds L1 cache capacity. On matrix transposition (used in backpropagation's `dW = X^T * dZ`), the contiguous layout showed **24.1% fewer L1 data-cache misses**.
+
+| Operation | Metric | Contiguous | Nested | Reduction |
+|---|---|---:|---:|---:|
+| 1024×1024 matmul | LL misses | 19.7M | 114.1M | -82.7% |
+| 512×512 transpose | D1 misses | 3.46M | 4.56M | -24.1% |
+| 512×512 matmul | LL misses | 142,815 | 186,919 | -23.6% |
+
+Zero memory leaks were also confirmed in the C++ engine via Valgrind Memcheck (`PYTHONMALLOC=malloc`) across a 200-epoch training run (37,547 allocations, 0 bytes definitely lost).
+
+See [`benchmarks/`](benchmarks/) for the benchmark source and instructions to reproduce, and [`docs/profiling-results.md`](docs/profiling-results.md) for the full results.
 
 ---
 
