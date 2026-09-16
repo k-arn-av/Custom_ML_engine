@@ -148,10 +148,4 @@ At 1024×1024, runtime is comparable because the workload is compute-bound (O(n�
 
 ---
 
-## Resume-Ready Bullet (with real data)
-
-> Implemented contiguous row-major 2D matrix storage with one-dimensional `std::vector` backing; profiled with Valgrind Cachegrind, validating 82.7% fewer last-level cache misses versus a `std::vector<std::vector<double>>` baseline on 1024×1024 matrix multiplication and 24.1% fewer L1 data cache misses on matrix transposition.
-
-Alternative shorter version:
-
 > Implemented contiguous row-major 2D matrix storage with 1D `std::vector` backing; Cachegrind profiling confirmed 82.7% fewer last-level cache misses versus a nested-vector baseline on large matrix multiplication.
